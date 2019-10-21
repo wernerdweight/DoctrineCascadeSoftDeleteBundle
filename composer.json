@@ -1,0 +1,55 @@
+{
+    "name": "wernerdweight/doctrine-cascade-soft-delete-bundle",
+    "type": "symfony-bundle",
+    "description": "A Symfony bundle that enables your application to cascade on delete even if you're using soft-delete.",
+    "keywords": [
+        "doctrine",
+        "soft-delete",
+        "cascade",
+        "bundle"
+    ],
+    "homepage": "https://github.com/wernerdweight/DoctrineCascadeSoftDeleteBundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Werner Dweight Solutions",
+            "email": "info@wds.blue"
+        }
+    ],
+    "require": {
+        "php": ">=7.2.0",
+        "symfony/framework-bundle": "^4.0",
+        "symfony/orm-pack": "^1.0",
+        "thecodingmachine/safe": "^0.1.13"
+    },
+    "require-dev": {
+        "wernerdweight/cs": "^1.2.1",
+        "thecodingmachine/phpstan-safe-rule": "^0.1.2",
+        "symfony/phpunit-bridge": "^4.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "WernerDweight\\DoctrineCascadeSoftDeleteBundle\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "WernerDweight\\DoctrineCascadeSoftDeleteBundle\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "fix": "ecs check ./src/ ./tests/ --config vendor/wernerdweight/cs/WernerDweight/CS/src/ecs.yaml --fix",
+        "phpstan": "phpstan analyse ./src/ ./tests/ --level max",
+        "phpmd": "phpmd ./src/ text vendor/wernerdweight/cs/WernerDweight/CS/phpmd.xml",
+        "ecs": "ecs check ./src/ ./tests/ --config vendor/wernerdweight/cs/WernerDweight/CS/src/ecs.yaml",
+        "ecs-fix": "ecs check ./src/ ./tests/ --config vendor/wernerdweight/cs/WernerDweight/CS/src/ecs.yaml --fix",
+        "phpunit": "phpunit",
+        "victor": "victor"
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": false,
+            "require": "^4.3"
+        }
+    }
+}
