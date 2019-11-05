@@ -5,7 +5,6 @@ namespace WernerDweight\DoctrineCascadeSoftDeleteBundle\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use WernerDweight\DoctrineCascadeSoftDeleteBundle\DTO\SoftDeleteGraphNode;
 use WernerDweight\DoctrineCascadeSoftDeleteBundle\Exception\GraphFetcherException;
 
 class GraphFetcher
@@ -27,19 +26,20 @@ class GraphFetcher
     /** @var string */
     private const FIELD_NAME_ATTRIBUTE = 'fieldName';
 
+    /** @var ClassMetadata[] */
+    private $metadata = [];
+
     /** @var EntityManagerInterface */
     private $entityManager;
 
     /** @var GraphFactory */
     private $graphFactory;
 
-    /** @var ClassMetadata[] */
-    private $metadata;
-
     /**
      * GraphFetcher constructor.
+     *
      * @param EntityManagerInterface $entityManager
-     * @param GraphFactory $graphFactory
+     * @param GraphFactory           $graphFactory
      */
     public function __construct(EntityManagerInterface $entityManager, GraphFactory $graphFactory)
     {
@@ -50,7 +50,8 @@ class GraphFetcher
     /**
      * @param string $className
      * @param string $fieldName
-     * @param array $ids
+     * @param array  $ids
+     *
      * @return array
      */
     private function getPrimaryKeysToDeleteAssociationsBy(string $className, string $fieldName, array $ids): array
@@ -74,11 +75,12 @@ class GraphFetcher
      * @param array $ids
      * @param array $joinColumn
      * @param array $association
+     *
      * @return GraphFetcher
      */
     private function processJoinColumn(array $ids, array $joinColumn, array $association): self
     {
-        if ($joinColumn[self::ON_DELETE_ATTRIBUTE] === self::MODE_CASCADE) {
+        if (self::MODE_CASCADE === $joinColumn[self::ON_DELETE_ATTRIBUTE]) {
             $this->graphFactory->pushRelationToDelete(
                 $association[self::SOURCE_ENTITY_ATTRIBUTE],
                 $association[self::FIELD_NAME_ATTRIBUTE],
@@ -92,7 +94,7 @@ class GraphFetcher
                     $ids
                 )
             );
-        } elseif ($joinColumn[self::ON_DELETE_ATTRIBUTE] === self::MODE_SET_NULL) {
+        } elseif (self::MODE_SET_NULL === $joinColumn[self::ON_DELETE_ATTRIBUTE]) {
             $this->graphFactory->pushRelationToDetach(
                 $association[self::SOURCE_ENTITY_ATTRIBUTE],
                 $association[self::FIELD_NAME_ATTRIBUTE],
@@ -105,6 +107,7 @@ class GraphFetcher
     /**
      * @param array $ids
      * @param array $association
+     *
      * @return GraphFetcher
      */
     private function processAssociation(array $ids, array $association): self
@@ -118,7 +121,10 @@ class GraphFetcher
             return $this;
         }
         if (true === array_key_exists(self::JOIN_TABLE_PROPERTY, $association)) {
-            if (true === array_key_exists(self::INVERSE_JOIN_COLUMNS_PROPERTY, $association[self::JOIN_TABLE_PROPERTY])) {
+            if (true === array_key_exists(
+                self::INVERSE_JOIN_COLUMNS_PROPERTY,
+                $association[self::JOIN_TABLE_PROPERTY]
+            )) {
                 // pure M:N relations can't be processed without deleting entries (no longer soft delete)
                 throw new GraphFetcherException(
                     GraphFetcherException::INVALID_SCHEMA,
@@ -132,6 +138,7 @@ class GraphFetcher
     /**
      * @param array $ids
      * @param array $associations
+     *
      * @return GraphFetcher
      */
     private function processAssociations(array $ids, array $associations): self
@@ -145,9 +152,10 @@ class GraphFetcher
     }
 
     /**
-     * @param array $ids
+     * @param array  $ids
      * @param string $entityClass
-     * @param array $embeddedClasses
+     * @param array  $embeddedClasses
+     *
      * @return CascadeSoftDeleter
      */
     private function processEmbeddedClasses(array $ids, string $entityClass, array $embeddedClasses): self
@@ -165,7 +173,7 @@ class GraphFetcher
      */
     private function fetchMetadata(): array
     {
-        if ($this->metadata === null) {
+        if (null === $this->metadata) {
             /** @var ClassMetadata[] $metadata */
             $metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
             $this->metadata = $metadata;
@@ -175,7 +183,8 @@ class GraphFetcher
 
     /**
      * @param string $entityClass
-     * @param array $ids
+     * @param array  $ids
+     *
      * @return CascadeSoftDeleter
      */
     public function fetchDeleteGraph(string $entityClass, array $ids): SoftDeleteGraph

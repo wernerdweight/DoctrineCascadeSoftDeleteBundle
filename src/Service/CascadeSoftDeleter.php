@@ -6,12 +6,14 @@ namespace WernerDweight\DoctrineCascadeSoftDeleteBundle\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use WernerDweight\DoctrineCascadeSoftDeleteBundle\DTO\SoftDeleteGraph;
-use WernerDweight\DoctrineCascadeSoftDeleteBundle\DTO\SoftDeleteGraphNode;
 
 class CascadeSoftDeleter
 {
     /** @var string */
     private const DOCTRINE_PROXY_PREFIX = 'Proxies\\__CG__\\';
+
+    /** @var ClassMetadata[] */
+    private $metadata = [];
 
     /** @var EntityManagerInterface */
     private $entityManager;
@@ -19,13 +21,11 @@ class CascadeSoftDeleter
     /** @var GraphFetcher */
     private $graphFetcher;
 
-    /** @var ClassMetadata[] */
-    private $metadata;
-
     /**
      * CascadeSoftDeleter constructor.
+     *
      * @param EntityManagerInterface $entityManager
-     * @param GraphFetcher $graphFetcher
+     * @param GraphFetcher           $graphFetcher
      */
     public function __construct(EntityManagerInterface $entityManager, GraphFetcher $graphFetcher)
     {
@@ -35,6 +35,7 @@ class CascadeSoftDeleter
 
     /**
      * @param object $entity
+     *
      * @return string
      */
     private function getProxylessClass(object $entity): string
@@ -44,7 +45,9 @@ class CascadeSoftDeleter
 
     /**
      * @param SoftDeleteGraph $graph
+     *
      * @return CascadeSoftDeleter
+     *
      * @throws \Exception
      */
     private function executeDelete(SoftDeleteGraph $graph): self
@@ -84,7 +87,9 @@ class CascadeSoftDeleter
 
     /**
      * @param object $entity
+     *
      * @return CascadeSoftDeleter
+     *
      * @throws \Doctrine\ORM\Mapping\MappingException
      */
     public function delete(object $entity): self
@@ -92,7 +97,10 @@ class CascadeSoftDeleter
         $className = $this->getProxylessClass($entity);
         $entityMetadata = $this->entityManager->getClassMetadata($className);
         $identifierFieldName = $entityMetadata->getSingleIdentifierFieldName();
-        $graph = $this->graphFetcher->fetchDeleteGraph($className, [$entity->{'get' . ucfirst($identifierFieldName)}()]);
+        $graph = $this->graphFetcher->fetchDeleteGraph(
+            $className,
+            [$entity->{'get' . ucfirst($identifierFieldName)}()]
+        );
         $this->executeDelete($graph);
         return $this;
     }

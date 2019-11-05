@@ -12,8 +12,7 @@ class GraphFetcherException extends AbstractEnhancedException
 
     /** @var string[] */
     protected static $messages = [
-        self::INVALID_SCHEMA =>
-            'Invalid schema! Table `%s` needs to be refactored to a mapped entity with two separate N:1 relations' .
+        self::INVALID_SCHEMA => 'Invalid schema! Table `%s` needs to be refactored to a mapped entity with two separate N:1 relations' .
             'to be able to cascade soft delete!',
     ];
 }

@@ -3,10 +3,7 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCascadeSoftDeleteBundle\Service;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadata;
 use WernerDweight\DoctrineCascadeSoftDeleteBundle\DTO\SoftDeleteGraph;
-use WernerDweight\DoctrineCascadeSoftDeleteBundle\DTO\SoftDeleteGraphNode;
 use WernerDweight\DoctrineCascadeSoftDeleteBundle\Exception\GraphFactoryException;
 
 class GraphFactory
@@ -19,6 +16,7 @@ class GraphFactory
 
     /**
      * GraphFactory constructor.
+     *
      * @param GraphNodeFactory $graphNodeFactory
      */
     public function __construct(GraphNodeFactory $graphNodeFactory)
@@ -52,7 +50,8 @@ class GraphFactory
     /**
      * @param string $entityClass
      * @param string $property
-     * @param RA $foreignKeys
+     * @param RA     $foreignKeys
+     *
      * @return GraphFactory
      */
     public function pushRelationToDelete(string $entityClass, string $property, RA $foreignKeys): self
@@ -66,7 +65,8 @@ class GraphFactory
     /**
      * @param string $entityClass
      * @param string $property
-     * @param RA $foreignKeys
+     * @param RA     $foreignKeys
+     *
      * @return GraphFactory
      */
     public function pushEmbeddedToDelete(string $entityClass, string $property, RA $foreignKeys): self
@@ -80,7 +80,8 @@ class GraphFactory
     /**
      * @param string $entityClass
      * @param string $property
-     * @param RA $foreignKeys
+     * @param RA     $foreignKeys
+     *
      * @return GraphFactory
      */
     public function pushRelationToDetach(string $entityClass, string $property, RA $foreignKeys): self

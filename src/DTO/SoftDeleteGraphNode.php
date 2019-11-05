@@ -16,9 +16,10 @@ class SoftDeleteGraphNode
 
     /**
      * SoftDeleteGraphNode constructor.
+     *
      * @param string $entityClass
      * @param string $property
-     * @param RA $foreignKeys
+     * @param RA     $foreignKeys
      */
     public function __construct(string $entityClass, string $property, RA $foreignKeys)
     {
