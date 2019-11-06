@@ -162,7 +162,7 @@ class GraphFetcher
     {
         if (true !== empty($embeddedClasses)) {
             /** @var string $property */
-            foreach ($embeddedClasses as $property => $embeddedClass) {
+            foreach (array_keys($embeddedClasses) as $property) {
                 $this->graphFactory->pushEmbeddedToDelete($entityClass, $property, $ids);
             }
         }

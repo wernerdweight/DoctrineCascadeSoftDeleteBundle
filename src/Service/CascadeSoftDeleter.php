@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCascadeSoftDeleteBundle\Service;
 
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Gedmo\SoftDeleteable\Query\TreeWalker\SoftDeleteableWalker;
@@ -65,7 +66,7 @@ class CascadeSoftDeleter
             $this->entityManager->createQueryBuilder()
                 ->update($deleteEmbedded->getEntityClass(), 'this')
                 ->set('this.' . $deleteEmbedded->getProperty() . '.deletedAt', ':now')
-                ->setParameter('now', new \DateTime())
+                ->setParameter('now', new DateTime())
                 ->where('this.id IN (:ids)')
                 ->setParameter('ids', $deleteEmbedded->getForeignKeys())
                 ->getQuery()
