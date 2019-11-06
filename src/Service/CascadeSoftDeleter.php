@@ -4,16 +4,15 @@ declare(strict_types=1);
 namespace WernerDweight\DoctrineCascadeSoftDeleteBundle\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Query;
+use Gedmo\SoftDeleteable\Query\TreeWalker\SoftDeleteableWalker;
 use WernerDweight\DoctrineCascadeSoftDeleteBundle\DTO\SoftDeleteGraph;
+use WernerDweight\RA\RA;
 
 class CascadeSoftDeleter
 {
     /** @var string */
     private const DOCTRINE_PROXY_PREFIX = 'Proxies\\__CG__\\';
-
-    /** @var ClassMetadata[] */
-    private $metadata = [];
 
     /** @var EntityManagerInterface */
     private $entityManager;
@@ -99,7 +98,7 @@ class CascadeSoftDeleter
         $identifierFieldName = $entityMetadata->getSingleIdentifierFieldName();
         $graph = $this->graphFetcher->fetchDeleteGraph(
             $className,
-            [$entity->{'get' . ucfirst($identifierFieldName)}()]
+            new RA([$entity->{'get' . ucfirst($identifierFieldName)}()])
         );
         $this->executeDelete($graph);
         return $this;

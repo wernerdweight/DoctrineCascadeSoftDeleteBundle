@@ -5,6 +5,7 @@ namespace WernerDweight\DoctrineCascadeSoftDeleteBundle\Service;
 
 use WernerDweight\DoctrineCascadeSoftDeleteBundle\DTO\SoftDeleteGraph;
 use WernerDweight\DoctrineCascadeSoftDeleteBundle\Exception\GraphFactoryException;
+use WernerDweight\RA\RA;
 
 class GraphFactory
 {
@@ -97,7 +98,7 @@ class GraphFactory
      */
     public function eject(): SoftDeleteGraph
     {
-        $graph = $this->graph;
+        $graph = $this->getGraph();
         $this->graph = null;
         return $graph;
     }

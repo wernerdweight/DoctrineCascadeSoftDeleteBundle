@@ -5,7 +5,9 @@ namespace WernerDweight\DoctrineCascadeSoftDeleteBundle\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use WernerDweight\DoctrineCascadeSoftDeleteBundle\DTO\SoftDeleteGraph;
 use WernerDweight\DoctrineCascadeSoftDeleteBundle\Exception\GraphFetcherException;
+use WernerDweight\RA\RA;
 
 class GraphFetcher
 {
@@ -50,35 +52,33 @@ class GraphFetcher
     /**
      * @param string $className
      * @param string $fieldName
-     * @param array  $ids
+     * @param RA     $ids
      *
-     * @return array
+     * @return RA
      */
-    private function getPrimaryKeysToDeleteAssociationsBy(string $className, string $fieldName, array $ids): array
+    private function getPrimaryKeysToDeleteAssociationsBy(string $className, string $fieldName, RA $ids): RA
     {
         $keysArray = $this->entityManager->createQueryBuilder()
-            ->select('IDENTITY(this)')
+            ->select('IDENTITY(this) AS id')
             ->from($className, 'this')
             ->where('IDENTITY(this.' . $fieldName . ') IN (:ids)')
-            ->setParameter('ids', $ids)
+            ->setParameter('ids', $ids->toArray())
             ->getQuery()
             ->getArrayResult();
 
-        $keys = [];
-        foreach ($keysArray as $key) {
-            $keys[] = $key['id'];
-        }
-        return $keys;
+        return (new RA($keysArray))->map(function (array $entry) {
+            return $entry['id'];
+        });
     }
 
     /**
-     * @param array $ids
+     * @param RA    $ids
      * @param array $joinColumn
      * @param array $association
      *
      * @return GraphFetcher
      */
-    private function processJoinColumn(array $ids, array $joinColumn, array $association): self
+    private function processJoinColumn(RA $ids, array $joinColumn, array $association): self
     {
         if (self::MODE_CASCADE === $joinColumn[self::ON_DELETE_ATTRIBUTE]) {
             $this->graphFactory->pushRelationToDelete(
@@ -105,12 +105,12 @@ class GraphFetcher
     }
 
     /**
-     * @param array $ids
+     * @param RA    $ids
      * @param array $association
      *
      * @return GraphFetcher
      */
-    private function processAssociation(array $ids, array $association): self
+    private function processAssociation(RA $ids, array $association): self
     {
         if (true === array_key_exists(self::JOIN_COLUMNS_PROPERTY, $association)) {
             foreach ($association[self::JOIN_COLUMNS_PROPERTY] as $joinColumn) {
@@ -136,12 +136,12 @@ class GraphFetcher
     }
 
     /**
-     * @param array $ids
+     * @param RA    $ids
      * @param array $associations
      *
      * @return GraphFetcher
      */
-    private function processAssociations(array $ids, array $associations): self
+    private function processAssociations(RA $ids, array $associations): self
     {
         if (true !== empty($associations)) {
             foreach ($associations as $association) {
@@ -152,15 +152,16 @@ class GraphFetcher
     }
 
     /**
-     * @param array  $ids
+     * @param RA     $ids
      * @param string $entityClass
      * @param array  $embeddedClasses
      *
-     * @return CascadeSoftDeleter
+     * @return GraphFetcher
      */
-    private function processEmbeddedClasses(array $ids, string $entityClass, array $embeddedClasses): self
+    private function processEmbeddedClasses(RA $ids, string $entityClass, array $embeddedClasses): self
     {
         if (true !== empty($embeddedClasses)) {
+            /** @var string $property */
             foreach ($embeddedClasses as $property => $embeddedClass) {
                 $this->graphFactory->pushEmbeddedToDelete($entityClass, $property, $ids);
             }
@@ -169,7 +170,7 @@ class GraphFetcher
     }
 
     /**
-     * @return ClassMetadata[[
+     * @return ClassMetadata[]
      */
     private function fetchMetadata(): array
     {
@@ -183,11 +184,11 @@ class GraphFetcher
 
     /**
      * @param string $entityClass
-     * @param array  $ids
+     * @param RA     $ids
      *
-     * @return CascadeSoftDeleter
+     * @return SoftDeleteGraph
      */
-    public function fetchDeleteGraph(string $entityClass, array $ids): SoftDeleteGraph
+    public function fetchDeleteGraph(string $entityClass, RA $ids): SoftDeleteGraph
     {
         $this->graphFactory->initialize();
         $entityMetadata = $this->entityManager->getClassMetadata($entityClass);

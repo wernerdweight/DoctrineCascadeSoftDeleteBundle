@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCascadeSoftDeleteBundle\DTO;
 
+use WernerDweight\RA\RA;
+
 class SoftDeleteGraphNode
 {
     /** @var string */

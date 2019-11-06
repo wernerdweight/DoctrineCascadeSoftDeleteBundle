@@ -7,13 +7,13 @@ use WernerDweight\RA\RA;
 
 class SoftDeleteGraph
 {
-    /** @var RA<SoftDeleteGraphNode> */
+    /** @var RA */
     private $deleteRelations;
 
-    /** @var RA<SoftDeleteGraphNode> */
+    /** @var RA */
     private $deleteEmbedded;
 
-    /** @var RA<SoftDeleteGraphNode> */
+    /** @var RA */
     private $detachRelations;
 
     /**
@@ -27,7 +27,7 @@ class SoftDeleteGraph
     }
 
     /**
-     * @return RA<SoftDeleteGraphNode>
+     * @return RA
      */
     public function getDeleteRelations(): RA
     {
@@ -35,7 +35,7 @@ class SoftDeleteGraph
     }
 
     /**
-     * @return RA<SoftDeleteGraphNode>
+     * @return RA
      */
     public function getDeleteEmbedded(): RA
     {
@@ -43,7 +43,7 @@ class SoftDeleteGraph
     }
 
     /**
-     * @return RA<SoftDeleteGraphNode>
+     * @return RA
      */
     public function getDetachRelations(): RA
     {
