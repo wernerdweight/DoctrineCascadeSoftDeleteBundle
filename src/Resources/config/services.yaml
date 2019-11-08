@@ -6,7 +6,7 @@ services:
 
     WernerDweight\DoctrineCascadeSoftDeleteBundle\:
         resource: '../../*'
-        exclude: '../../{DependencyInjection,Exception}'
+        exclude: '../../{DependencyInjection,DTO,Exception}'
 
     WernerDweight\DoctrineCascadeSoftDeleteBundle\EventListener\CascadeSoftDeleteListener:
         tags:
