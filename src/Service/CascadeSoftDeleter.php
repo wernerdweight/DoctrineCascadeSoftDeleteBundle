@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCascadeSoftDeleteBundle\Service;
 
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Gedmo\SoftDeleteable\Query\TreeWalker\SoftDeleteableWalker;
+use Safe\DateTime;
 use WernerDweight\DoctrineCascadeSoftDeleteBundle\DTO\SoftDeleteGraph;
 use WernerDweight\DoctrineCascadeSoftDeleteBundle\DTO\SoftDeleteGraphNode;
 use WernerDweight\RA\RA;

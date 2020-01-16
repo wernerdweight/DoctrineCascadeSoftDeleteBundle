@@ -71,9 +71,9 @@ class GraphFetcher
     }
 
     /**
-     * @param RA    $ids
-     * @param array $joinColumn
-     * @param array $association
+     * @param RA       $ids
+     * @param string[] $joinColumn
+     * @param mixed[]  $association
      *
      * @return GraphFetcher
      */
@@ -104,8 +104,8 @@ class GraphFetcher
     }
 
     /**
-     * @param RA    $ids
-     * @param array $association
+     * @param RA      $ids
+     * @param mixed[] $association
      *
      * @return GraphFetcher
      */
@@ -135,8 +135,8 @@ class GraphFetcher
     }
 
     /**
-     * @param RA    $ids
-     * @param array $associations
+     * @param RA      $ids
+     * @param array[] $associations
      *
      * @return GraphFetcher
      */
@@ -151,9 +151,9 @@ class GraphFetcher
     }
 
     /**
-     * @param RA     $ids
-     * @param string $entityClass
-     * @param array  $embeddedClasses
+     * @param RA       $ids
+     * @param string   $entityClass
+     * @param string[] $embeddedClasses
      *
      * @return GraphFetcher
      */
