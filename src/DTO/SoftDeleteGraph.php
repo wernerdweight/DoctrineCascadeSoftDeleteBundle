@@ -26,25 +26,16 @@ class SoftDeleteGraph
         $this->detachRelations = new RA();
     }
 
-    /**
-     * @return RA
-     */
     public function getDeleteRelations(): RA
     {
         return $this->deleteRelations;
     }
 
-    /**
-     * @return RA
-     */
     public function getDeleteEmbedded(): RA
     {
         return $this->deleteEmbedded;
     }
 
-    /**
-     * @return RA
-     */
     public function getDetachRelations(): RA
     {
         return $this->detachRelations;

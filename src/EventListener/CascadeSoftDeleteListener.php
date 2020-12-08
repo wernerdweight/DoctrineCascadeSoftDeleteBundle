@@ -13,8 +13,6 @@ class CascadeSoftDeleteListener
 
     /**
      * CascadeSoftDeleteListener constructor.
-     *
-     * @param CascadeSoftDeleter $cascadeSoftDeleter
      */
     public function __construct(CascadeSoftDeleter $cascadeSoftDeleter)
     {
@@ -22,8 +20,6 @@ class CascadeSoftDeleteListener
     }
 
     /**
-     * @param LifecycleEventArgs $args
-     *
      * @throws \Exception
      */
     public function preRemove(LifecycleEventArgs $args): void

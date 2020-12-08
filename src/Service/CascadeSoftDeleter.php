@@ -27,10 +27,6 @@ class CascadeSoftDeleter
 
     /**
      * CascadeSoftDeleter constructor.
-     *
-     * @param EntityManagerInterface $entityManager
-     * @param GraphFetcher           $graphFetcher
-     * @param GraphFactory           $graphFactory
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -42,19 +38,12 @@ class CascadeSoftDeleter
         $this->graphFactory = $graphFactory;
     }
 
-    /**
-     * @param object $entity
-     *
-     * @return string
-     */
     private function getProxylessClass(object $entity): string
     {
         return str_replace(self::DOCTRINE_PROXY_PREFIX, '', get_class($entity));
     }
 
     /**
-     * @param SoftDeleteGraph $graph
-     *
      * @return CascadeSoftDeleter
      *
      * @throws \Exception
@@ -98,8 +87,6 @@ class CascadeSoftDeleter
     }
 
     /**
-     * @param object $entity
-     *
      * @return CascadeSoftDeleter
      *
      * @throws \Doctrine\ORM\Mapping\MappingException

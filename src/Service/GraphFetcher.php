@@ -38,9 +38,6 @@ class GraphFetcher
 
     /**
      * GraphFetcher constructor.
-     *
-     * @param EntityManagerInterface $entityManager
-     * @param GraphFactory           $graphFactory
      */
     public function __construct(EntityManagerInterface $entityManager, GraphFactory $graphFactory)
     {
@@ -48,13 +45,6 @@ class GraphFetcher
         $this->graphFactory = $graphFactory;
     }
 
-    /**
-     * @param string $className
-     * @param string $fieldName
-     * @param RA     $ids
-     *
-     * @return RA
-     */
     private function getPrimaryKeysToDeleteAssociationsBy(string $className, string $fieldName, RA $ids): RA
     {
         $keysArray = $this->entityManager->createQueryBuilder()
@@ -71,7 +61,6 @@ class GraphFetcher
     }
 
     /**
-     * @param RA       $ids
      * @param string[] $joinColumn
      * @param mixed[]  $association
      *
@@ -104,7 +93,6 @@ class GraphFetcher
     }
 
     /**
-     * @param RA      $ids
      * @param mixed[] $association
      *
      * @return GraphFetcher
@@ -125,17 +113,13 @@ class GraphFetcher
                 $association[self::JOIN_TABLE_PROPERTY]
             )) {
                 // pure M:N relations can't be processed without deleting entries (no longer soft delete)
-                throw new GraphFetcherException(
-                    GraphFetcherException::INVALID_SCHEMA,
-                    [$association[self::JOIN_TABLE_PROPERTY]['name']]
-                );
+                throw new GraphFetcherException(GraphFetcherException::INVALID_SCHEMA, [$association[self::JOIN_TABLE_PROPERTY]['name']]);
             }
         }
         return $this;
     }
 
     /**
-     * @param RA      $ids
      * @param array[] $associations
      *
      * @return GraphFetcher
@@ -151,8 +135,6 @@ class GraphFetcher
     }
 
     /**
-     * @param RA       $ids
-     * @param string   $entityClass
      * @param string[] $embeddedClasses
      *
      * @return GraphFetcher
@@ -182,9 +164,6 @@ class GraphFetcher
     }
 
     /**
-     * @param string $entityClass
-     * @param RA     $ids
-     *
      * @return GraphFetcher
      */
     public function fetchDeleteGraph(string $entityClass, RA $ids): self

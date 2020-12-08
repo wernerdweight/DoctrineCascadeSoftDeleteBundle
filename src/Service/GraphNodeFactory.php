@@ -8,13 +8,6 @@ use WernerDweight\RA\RA;
 
 class GraphNodeFactory
 {
-    /**
-     * @param string $entityClass
-     * @param string $property
-     * @param RA     $foreignKeys
-     *
-     * @return SoftDeleteGraphNode
-     */
     public function create(string $entityClass, string $property, RA $foreignKeys): SoftDeleteGraphNode
     {
         return new SoftDeleteGraphNode($entityClass, $property, $foreignKeys);

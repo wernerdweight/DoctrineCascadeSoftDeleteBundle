@@ -18,10 +18,6 @@ class SoftDeleteGraphNode
 
     /**
      * SoftDeleteGraphNode constructor.
-     *
-     * @param string $entityClass
-     * @param string $property
-     * @param RA     $foreignKeys
      */
     public function __construct(string $entityClass, string $property, RA $foreignKeys)
     {
@@ -30,25 +26,16 @@ class SoftDeleteGraphNode
         $this->foreignKeys = $foreignKeys;
     }
 
-    /**
-     * @return string
-     */
     public function getEntityClass(): string
     {
         return $this->entityClass;
     }
 
-    /**
-     * @return string
-     */
     public function getProperty(): string
     {
         return $this->property;
     }
 
-    /**
-     * @return RA
-     */
     public function getForeignKeys(): RA
     {
         return $this->foreignKeys;

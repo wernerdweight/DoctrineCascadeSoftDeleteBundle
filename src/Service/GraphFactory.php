@@ -17,17 +17,12 @@ class GraphFactory
 
     /**
      * GraphFactory constructor.
-     *
-     * @param GraphNodeFactory $graphNodeFactory
      */
     public function __construct(GraphNodeFactory $graphNodeFactory)
     {
         $this->graphNodeFactory = $graphNodeFactory;
     }
 
-    /**
-     * @return SoftDeleteGraph
-     */
     private function getGraph(): SoftDeleteGraph
     {
         if (null === $this->graph) {
@@ -49,10 +44,6 @@ class GraphFactory
     }
 
     /**
-     * @param string $entityClass
-     * @param string $property
-     * @param RA     $foreignKeys
-     *
      * @return GraphFactory
      */
     public function pushRelationToDelete(string $entityClass, string $property, RA $foreignKeys): self
@@ -64,10 +55,6 @@ class GraphFactory
     }
 
     /**
-     * @param string $entityClass
-     * @param string $property
-     * @param RA     $foreignKeys
-     *
      * @return GraphFactory
      */
     public function pushEmbeddedToDelete(string $entityClass, string $property, RA $foreignKeys): self
@@ -79,10 +66,6 @@ class GraphFactory
     }
 
     /**
-     * @param string $entityClass
-     * @param string $property
-     * @param RA     $foreignKeys
-     *
      * @return GraphFactory
      */
     public function pushRelationToDetach(string $entityClass, string $property, RA $foreignKeys): self
@@ -93,9 +76,6 @@ class GraphFactory
         return $this;
     }
 
-    /**
-     * @return SoftDeleteGraph
-     */
     public function eject(): SoftDeleteGraph
     {
         $graph = $this->getGraph();
