@@ -3,7 +3,7 @@ DoctrineCascadeSoftDeleteBundle
 
 A Symfony bundle that enables your application to cascade on delete even if you're using soft-delete.
 
-[![Build Status](https://travis-ci.org/wernerdweight/DoctrineCascadeSoftDeleteBundle.svg?branch=master)](https://travis-ci.org/wernerdweight/DoctrineCascadeSoftDeleteBundle)
+[![Build Status](https://app.travis-ci.com/wernerdweight/DoctrineCascadeSoftDeleteBundle.svg?branch=master)](https://app.travis-ci.com/wernerdweight/DoctrineCascadeSoftDeleteBundle)
 [![Latest Stable Version](https://poser.pugx.org/wernerdweight/doctrine-cascade-soft-delete-bundle/v/stable)](https://packagist.org/packages/wernerdweight/doctrine-cascade-soft-delete-bundle)
 [![Total Downloads](https://poser.pugx.org/wernerdweight/doctrine-cascade-soft-delete-bundle/downloads)](https://packagist.org/packages/wernerdweight/doctrine-cascade-soft-delete-bundle)
 [![License](https://poser.pugx.org/wernerdweight/doctrine-cascade-soft-delete-bundle/license)](https://packagist.org/packages/wernerdweight/doctrine-cascade-soft-delete-bundle)

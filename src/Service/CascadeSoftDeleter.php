@@ -13,21 +13,26 @@ use WernerDweight\RA\RA;
 
 class CascadeSoftDeleter
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     private const DOCTRINE_PROXY_PREFIX = 'Proxies\\__CG__\\';
 
-    /** @var EntityManagerInterface */
+    /**
+     * @var EntityManagerInterface
+     */
     private $entityManager;
 
-    /** @var GraphFetcher */
+    /**
+     * @var GraphFetcher
+     */
     private $graphFetcher;
 
-    /** @var GraphFactory */
+    /**
+     * @var GraphFactory
+     */
     private $graphFactory;
 
-    /**
-     * CascadeSoftDeleter constructor.
-     */
     public function __construct(
         EntityManagerInterface $entityManager,
         GraphFetcher $graphFetcher,
@@ -38,14 +43,29 @@ class CascadeSoftDeleter
         $this->graphFactory = $graphFactory;
     }
 
+    /**
+     * @throws \Doctrine\ORM\Mapping\MappingException
+     */
+    public function delete(object $entity): void
+    {
+        $className = $this->getProxylessClass($entity);
+        $entityMetadata = $this->entityManager->getClassMetadata($className);
+        $identifierFieldName = $entityMetadata->getSingleIdentifierFieldName();
+        $this->graphFactory->initialize();
+        $this->graphFetcher->fetchDeleteGraph(
+            $className,
+            new RA([$entity->{'get' . ucfirst($identifierFieldName)}()])
+        );
+        $graph = $this->graphFactory->eject();
+        $this->executeDelete($graph);
+    }
+
     private function getProxylessClass(object $entity): string
     {
         return str_replace(self::DOCTRINE_PROXY_PREFIX, '', get_class($entity));
     }
 
     /**
-     * @return CascadeSoftDeleter
-     *
      * @throws \Exception
      */
     private function executeDelete(SoftDeleteGraph $graph): self
@@ -83,26 +103,6 @@ class CascadeSoftDeleter
                 ->execute();
         }
 
-        return $this;
-    }
-
-    /**
-     * @return CascadeSoftDeleter
-     *
-     * @throws \Doctrine\ORM\Mapping\MappingException
-     */
-    public function delete(object $entity): self
-    {
-        $className = $this->getProxylessClass($entity);
-        $entityMetadata = $this->entityManager->getClassMetadata($className);
-        $identifierFieldName = $entityMetadata->getSingleIdentifierFieldName();
-        $this->graphFactory->initialize();
-        $this->graphFetcher->fetchDeleteGraph(
-            $className,
-            new RA([$entity->{'get' . ucfirst($identifierFieldName)}()])
-        );
-        $graph = $this->graphFactory->eject();
-        $this->executeDelete($graph);
         return $this;
     }
 }

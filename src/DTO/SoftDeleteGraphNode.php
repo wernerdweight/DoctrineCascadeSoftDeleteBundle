@@ -7,18 +7,21 @@ use WernerDweight\RA\RA;
 
 class SoftDeleteGraphNode
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $entityClass;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $property;
 
-    /** @var RA */
+    /**
+     * @var RA
+     */
     protected $foreignKeys;
 
-    /**
-     * SoftDeleteGraphNode constructor.
-     */
     public function __construct(string $entityClass, string $property, RA $foreignKeys)
     {
         $this->entityClass = $entityClass;

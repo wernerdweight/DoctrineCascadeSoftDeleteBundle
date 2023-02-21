@@ -10,39 +10,86 @@ use WernerDweight\RA\RA;
 
 class GraphFetcher
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     private const MODE_CASCADE = 'CASCADE';
-    /** @var string */
-    private const MODE_SET_NULL = 'SET NULL';
-    /** @var string */
-    private const JOIN_COLUMNS_PROPERTY = 'joinColumns';
-    /** @var string */
-    private const INVERSE_JOIN_COLUMNS_PROPERTY = 'inverseJoinColumns';
-    /** @var string */
-    private const JOIN_TABLE_PROPERTY = 'joinTable';
-    /** @var string */
-    private const ON_DELETE_ATTRIBUTE = 'onDelete';
-    /** @var string */
-    private const SOURCE_ENTITY_ATTRIBUTE = 'sourceEntity';
-    /** @var string */
-    private const FIELD_NAME_ATTRIBUTE = 'fieldName';
-
-    /** @var ClassMetadata[]|null */
-    private $metadata;
-
-    /** @var EntityManagerInterface */
-    private $entityManager;
-
-    /** @var GraphFactory */
-    private $graphFactory;
 
     /**
-     * GraphFetcher constructor.
+     * @var string
      */
+    private const MODE_SET_NULL = 'SET NULL';
+
+    /**
+     * @var string
+     */
+    private const JOIN_COLUMNS_PROPERTY = 'joinColumns';
+
+    /**
+     * @var string
+     */
+    private const INVERSE_JOIN_COLUMNS_PROPERTY = 'inverseJoinColumns';
+
+    /**
+     * @var string
+     */
+    private const JOIN_TABLE_PROPERTY = 'joinTable';
+
+    /**
+     * @var string
+     */
+    private const ON_DELETE_ATTRIBUTE = 'onDelete';
+
+    /**
+     * @var string
+     */
+    private const SOURCE_ENTITY_ATTRIBUTE = 'sourceEntity';
+
+    /**
+     * @var string
+     */
+    private const FIELD_NAME_ATTRIBUTE = 'fieldName';
+
+    /**
+     * @var ClassMetadata[]|null
+     */
+    private $metadata;
+
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @var GraphFactory
+     */
+    private $graphFactory;
+
     public function __construct(EntityManagerInterface $entityManager, GraphFactory $graphFactory)
     {
         $this->entityManager = $entityManager;
         $this->graphFactory = $graphFactory;
+    }
+
+    public function fetchDeleteGraph(string $entityClass, RA $ids): void
+    {
+        $entityMetadata = $this->entityManager->getClassMetadata($entityClass);
+        $parentClasses = $entityMetadata->parentClasses;
+
+        foreach ($this->fetchMetadata() as $mapping) {
+            $associations = $mapping->getAssociationsByTargetClass($entityClass);
+            $this->processAssociations($ids, $associations);
+
+            if (count($parentClasses) > 0) {
+                foreach ($parentClasses as $parentClass) {
+                    $associations = $mapping->getAssociationsByTargetClass($parentClass);
+                    $this->processAssociations($ids, $associations);
+                }
+            }
+        }
+
+        $embeddedClasses = $entityMetadata->embeddedClasses;
+        $this->processEmbeddedClasses($ids, $entityClass, $embeddedClasses);
     }
 
     private function getPrimaryKeysToDeleteAssociationsBy(string $className, string $fieldName, RA $ids): RA
@@ -62,11 +109,9 @@ class GraphFetcher
 
     /**
      * @param string[] $joinColumn
-     * @param mixed[]  $association
-     *
-     * @return GraphFetcher
+     * @param string[] $association
      */
-    private function processJoinColumn(RA $ids, array $joinColumn, array $association): self
+    private function processJoinColumn(RA $ids, array $joinColumn, array $association): void
     {
         if (self::MODE_CASCADE === $joinColumn[self::ON_DELETE_ATTRIBUTE]) {
             $this->graphFactory->pushRelationToDelete(
@@ -89,13 +134,10 @@ class GraphFetcher
                 $ids
             );
         }
-        return $this;
     }
 
     /**
      * @param mixed[] $association
-     *
-     * @return GraphFetcher
      */
     private function processAssociation(RA $ids, array $association): self
     {
@@ -113,41 +155,37 @@ class GraphFetcher
                 $association[self::JOIN_TABLE_PROPERTY]
             )) {
                 // pure M:N relations can't be processed without deleting entries (no longer soft delete)
-                throw new GraphFetcherException(GraphFetcherException::INVALID_SCHEMA, [$association[self::JOIN_TABLE_PROPERTY]['name']]);
+                throw new GraphFetcherException(GraphFetcherException::INVALID_SCHEMA, [
+                    $association[self::JOIN_TABLE_PROPERTY]['name'],
+                ]);
             }
         }
         return $this;
     }
 
     /**
-     * @param array[] $associations
-     *
-     * @return GraphFetcher
+     * @param mixed[][] $associations
      */
-    private function processAssociations(RA $ids, array $associations): self
+    private function processAssociations(RA $ids, array $associations): void
     {
-        if (true !== empty($associations)) {
+        if (count($associations) > 0) {
             foreach ($associations as $association) {
                 $this->processAssociation($ids, $association);
             }
         }
-        return $this;
     }
 
     /**
-     * @param string[] $embeddedClasses
-     *
-     * @return GraphFetcher
+     * @param array<string, mixed[]> $embeddedClasses
      */
-    private function processEmbeddedClasses(RA $ids, string $entityClass, array $embeddedClasses): self
+    private function processEmbeddedClasses(RA $ids, string $entityClass, array $embeddedClasses): void
     {
-        if (true !== empty($embeddedClasses)) {
+        if (count($embeddedClasses) > 0) {
             /** @var string $property */
             foreach (array_keys($embeddedClasses) as $property) {
                 $this->graphFactory->pushEmbeddedToDelete($entityClass, $property, $ids);
             }
         }
-        return $this;
     }
 
     /**
@@ -156,36 +194,11 @@ class GraphFetcher
     private function fetchMetadata(): array
     {
         if (null === $this->metadata) {
+            $metadataFactory = $this->entityManager->getMetadataFactory();
             /** @var ClassMetadata[] $metadata */
-            $metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
+            $metadata = $metadataFactory->getAllMetadata();
             $this->metadata = $metadata;
         }
         return $this->metadata;
-    }
-
-    /**
-     * @return GraphFetcher
-     */
-    public function fetchDeleteGraph(string $entityClass, RA $ids): self
-    {
-        $entityMetadata = $this->entityManager->getClassMetadata($entityClass);
-        $parentClasses = $entityMetadata->parentClasses;
-
-        foreach ($this->fetchMetadata() as $mapping) {
-            $associations = $mapping->getAssociationsByTargetClass($entityClass);
-            $this->processAssociations($ids, $associations);
-
-            if (true !== empty($parentClasses)) {
-                foreach ($parentClasses as $parentClass) {
-                    $associations = $mapping->getAssociationsByTargetClass($parentClass);
-                    $this->processAssociations($ids, $associations);
-                }
-            }
-        }
-
-        $embeddedClasses = $entityMetadata->embeddedClasses;
-        $this->processEmbeddedClasses($ids, $entityClass, $embeddedClasses);
-
-        return $this;
     }
 }

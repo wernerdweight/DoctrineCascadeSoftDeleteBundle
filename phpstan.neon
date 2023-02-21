@@ -1,3 +1,21 @@
 includes:
     - vendor/thecodingmachine/phpstan-safe-rule/phpstan-safe-rule.neon
     - vendor/wernerdweight/cs/src/Rules/phpstan-rules.neon
+
+parameters:
+    checkGenericClassInNonGenericObjectType: false
+    ignoreErrors:
+        -
+            message: '#Do not use chained method calls. Put each on separated lines#'
+            paths:
+                - 'src/Service/GraphFactory.php'
+                - 'src/Service/CascadeSoftDeleter.php'
+        -
+            message: '#Use explicit names over dynamic ones#'
+            path: 'src/Service/CascadeSoftDeleter.php'
+        -
+            message: '#Instead of protected element in use private element or contract method#'
+            path: 'src/DTO/SoftDeleteGraphNode.php'
+        -
+            message: '#Method call return value that should be used, but is not#'
+            path: 'src/Service/GraphFactory.php'

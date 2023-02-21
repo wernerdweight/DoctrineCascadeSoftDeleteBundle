@@ -8,12 +8,11 @@ use WernerDweight\DoctrineCascadeSoftDeleteBundle\Service\CascadeSoftDeleter;
 
 class CascadeSoftDeleteListener
 {
-    /** @var CascadeSoftDeleter */
+    /**
+     * @var CascadeSoftDeleter
+     */
     private $deleter;
 
-    /**
-     * CascadeSoftDeleteListener constructor.
-     */
     public function __construct(CascadeSoftDeleter $cascadeSoftDeleter)
     {
         $this->deleter = $cascadeSoftDeleter;

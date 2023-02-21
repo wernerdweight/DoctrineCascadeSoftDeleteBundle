@@ -7,18 +7,21 @@ use WernerDweight\RA\RA;
 
 class SoftDeleteGraph
 {
-    /** @var RA */
+    /**
+     * @var RA
+     */
     private $deleteRelations;
 
-    /** @var RA */
+    /**
+     * @var RA
+     */
     private $deleteEmbedded;
 
-    /** @var RA */
+    /**
+     * @var RA
+     */
     private $detachRelations;
 
-    /**
-     * SoftDeleteGraph constructor.
-     */
     public function __construct()
     {
         $this->deleteRelations = new RA();
